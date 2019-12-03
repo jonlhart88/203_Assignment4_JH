@@ -1,0 +1,34 @@
+---
+title: "Untitled"
+author: "Jon Hart"
+date: "11/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+x = rnorm(1000, mean = 0, sd = 3)
+
+# Given Values
+tidal_range <- 2.5
+low_tide <- -1.25
+high_tide <- 1.25
+
+normalrisk <- x > 5 
+
+table_norm_risk <- sum(normal_risk, na.rm = TRUE)
+table_norm_risk
+
+
+y = rnorm(1000, mean = -1.25, sd = 3)
+
+normalrisk_lowtide <- y >5
+table_normrisk_low <- sum(normalrisk_lowtide, na.rm = TRUE)
+table_normrisk_low
+```
+
+4.6% of time normal flood risk?
