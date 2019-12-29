@@ -1,0 +1,5 @@
+condition,low_tide_risk,high_tide_risk
+norm_risk,1.8,10.6
+1m,4.1,16.8
+2m,8.5,26.1
+3m,12.7,38.2

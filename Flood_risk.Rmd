@@ -1,6 +1,6 @@
 ---
-title: "Untitled"
-author: "Jon Hart"
+title: "Assignment 4"
+author: "Jon Hart" 
 date: "11/28/2019"
 output: html_document
 ---
@@ -11,81 +11,271 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
+library(tidyverse)
+library(here)
+
+set.seed(1234)
 x = rnorm(1000, mean = 0, sd = 3)
 
-
-# Given Values
-tidal_range <- 2.5
-low_tide <- -1.25
-high_tide <- 1.25
-
-normalrisk <- x > 5 
+normal_risk <- x > 5 
 
 table_norm_risk <- sum(normal_risk, na.rm = TRUE)
 table_norm_risk
 
+x_low <- x - 1.25
+x_high <- x + 1.25
 
-y = rnorm(1000, mean = -1.25, sd = 3)
-
-normalrisk_lowtide <- y > 5
+normalrisk_lowtide <- x_low > 5
 table_normrisk_low <- sum(normalrisk_lowtide, na.rm = TRUE)
 table_normrisk_low
 
-z = rnorm(1000, mean = 1.25, sd = 3)
-
-normalrisk_hightide <- z > 5
+normalrisk_hightide <- (x_high) > 5
 table_normrisk_high <- sum(normalrisk_hightide, na.rm = TRUE)
 table_normrisk_high
 ```
 
-4.6% of time normal flood risk?
-1.3% at low tide?
-12% at high tide?
+4.7% of time normal flood risk
+1.8% at low tide
+10.6% at high tide
 
 ```{r}
 
-y_1m <- y + 1
-y_2m <- y + 2
-y_3m <- y + 3
+x_1m_low <- x_low + 1
+x_2m_low <- x_low + 2
+x_3m_low <- x_low + 3
 
-onem_lowtide <- y_1m > 5
+onem_lowtide <- x_1m_low > 5
 table_1m_low <- sum(onem_lowtide, na.rm = TRUE)
 table_1m_low
 
-twom_lowtide <- y_2m > 5
+twom_lowtide <- x_2m_low > 5
 table_2m_low <- sum(twom_lowtide, na.rm = TRUE)
 table_2m_low
 
-threem_lowtide <- y_3m > 5
+threem_lowtide <- x_3m_low > 5
 table_3m_low <- sum(threem_lowtide, na.rm = TRUE)
 table_3m_low
 
 ```
 
-1m surge at low tide = 3.9%
-2m surge at low tide = 7.9%
-3m surge at low tide = 13.1% 
+1m surge at low tide = 4.1%
+2m surge at low tide = 8.5%
+3m surge at low tide = 12.7%
 
 ```{r}
-z_1m <- z + 1
-z_2m <- z + 2
-z_3m <- z + 3
+x_1m_high <- x_high + 1
+x_2m_high <- x_high + 2
+x_3m_high <- x_high + 3
 
-onem_hightide <- z_1m > 5
+onem_hightide <- x_1m_high > 5
 table_1m_high <- sum(onem_hightide, na.rm = TRUE)
 table_1m_high
 
-twom_hightide <- z_2m > 5
+twom_hightide <- x_2m_high > 5
 table_2m_high <- sum(twom_hightide, na.rm = TRUE)
 table_2m_high
 
-threem_hightide <- z_3m > 5
+threem_hightide <- x_3m_high > 5
 table_3m_high <- sum(threem_hightide, na.rm = TRUE)
 table_3m_high
 
 
 ```
 
-1m surge at high tide = 19.2%
-2m surge at high tide = 27%
-3m surge at high tide = 39.5% 
+1m surge at high tide = 16.8%
+2m surge at high tide = 26.1%
+3m surge at high tide = 38.2% 
+
+
+
+
+```{r}
+flood_risk <- read_csv("Flood_Risk.csv") %>% 
+  mutate(condition2 = case_when(
+    condition == "norm_risk" ~ "0 Surge (Normal Conditions)",
+    condition == "1m" ~ "1m Surge",
+    condition == "2m" ~ "2m Surge",
+    condition == "3m" ~ "3m Surge"
+  ))
+
+ggplot() +
+  geom_col(data = flood_risk, aes(x = condition2, y = high_tide_risk),
+           fill = "skyblue2",
+           color = "black") +
+  geom_text(label = "text") +
+  geom_col(data = flood_risk, aes(x = condition2, y = low_tide_risk),
+           fill = "orangered3",
+           color = "black") +
+ scale_y_continuous(expand = c(0,0),
+                     limits = c(0, 45),
+                    breaks = seq(0, 45, by = 5)) +
+  theme_bw() +
+   labs(title = "Flood Risk By Storm Surge Levels",
+       subtitle = "New York City, NY",
+       x = "Ocean Condition",
+       y = "Flood Risk (%)") +
+  geom_text(x = 1, 
+            y = 3, 
+            label = "1.8%",
+            size = 5,
+            aes(fontface = 2)) +
+  geom_text(x = 2, 
+            y = 5.5, 
+            label = "4.1%",
+            size = 5,
+            aes(fontface = 2)) +
+geom_text(x = 3, 
+            y = 10, 
+            label = "8.1%",
+            size = 5,
+            aes(fontface = 2)) +
+
+geom_text(x = 4, 
+            y = 14, 
+            label = "12.7%",
+            size = 5,
+            aes(fontface = 2)) +
+
+  geom_text(x = 1, 
+            y = 12, 
+            label = "10.6%",
+            size = 5,
+            aes(fontface = 2)) +
+  geom_text(x = 2, 
+            y = 18, 
+            label = "16.8%",
+            size = 5,
+            aes(fontface = 2)) +
+geom_text(x = 3, 
+            y = 27.5, 
+            label = "26.1%",
+            size = 5,
+            aes(fontface = 2)) +
+
+geom_text(x = 4, 
+            y = 39.5, 
+            label = "38.2%",
+            size = 5,
+            aes(fontface = 2))
+
+
+ggsave(here::here("figures", "flood_risk_current.png"), width = 8, height = 5)
+
+```
+
+
+
+```{r}
+# 2050 Projected Sea Level Rise NYC
+# Low - 7 inches
+# High - 31 inches
+
+set.seed(1234)
+l = rnorm(1000, mean = 0.1778, sd = 3)
+
+set.seed(1234)
+h = rnorm(1000, mean = 0.7874, sd = 3)
+```
+
+```{r}
+# Low Projections, Low Tide
+l_low <- l - 1.25
+l_high <- l + 1.25
+
+l_lowtide_0 <- l_low > 5
+table_l_lowtide_0 <- sum(l_lowtide_0, na.rm = TRUE)
+table_l_lowtide_0
+
+
+l_low_1 <- l_low + 1
+l_lowtide_1 <- l_low_1 > 5
+table_l_lowtide_1 <- sum(l_lowtide_1, na.rm = TRUE)
+table_l_lowtide_1
+
+l_low_2 <- l_low + 2
+l_lowtide_2 <- l_low_2 > 5
+table_l_lowtide_2 <- sum(l_lowtide_2, na.rm = TRUE)
+table_l_lowtide_2
+
+l_low_3 <- l_low + 3 
+l_lowtide_3 <- l_low_3 > 5
+table_l_lowtide_3 <- sum(l_lowtide_3, na.rm = TRUE)
+table_l_lowtide_3
+
+
+```
+
+```{r}
+# Low Projection, High Tide
+l_high_0 <- l_high > 5
+table_l_high_0 <- sum(l_high_0, na.rm = TRUE)
+table_l_high_0
+
+l_high_1 <- l_high + 1
+l_high_1 <- l_high_1 > 5
+table_l_high_1 <- sum(l_high_1, na.rm = TRUE)
+table_l_high_1
+
+l_high_2 <- l_high + 2
+l_high_2 <- l_high_2 > 5
+table_l_high_2 <- sum(l_high_2, na.rm = TRUE)
+table_l_high_2
+
+l_high_3 <- l_high + 3
+l_high_3 <- l_high_3 > 5
+table_l_high_3 <- sum(l_high_3, na.rm = TRUE)
+table_l_high_3
+```
+
+```{r}
+# High Projection, Low Tide
+
+h_low <- h - 1.25
+h_high <- h + 1.25
+
+h_lowtide_0 <- h_low > 5
+table_h_lowtide_0 <- sum(h_lowtide_0, na.rm = TRUE)
+table_h_lowtide_0
+
+
+h_low_1 <- h_low + 1
+h_lowtide_1 <- h_low_1 > 5
+table_h_lowtide_1 <- sum(h_lowtide_1, na.rm = TRUE)
+table_h_lowtide_1
+
+h_low_2 <- h_low + 2
+h_lowtide_2 <- h_low_2 > 5
+table_h_lowtide_2 <- sum(h_lowtide_2, na.rm = TRUE)
+table_h_lowtide_2
+
+h_low_3 <- h_low + 3 
+h_lowtide_3 <- h_low_3 > 5
+table_h_lowtide_3 <- sum(h_lowtide_3, na.rm = TRUE)
+table_h_lowtide_3
+
+```
+
+```{r}
+# High Projection, High Tide
+
+h_high_0 <- h_high > 5
+table_h_high_0 <- sum(h_high_0, na.rm = TRUE)
+table_h_high_0
+
+h_high_1 <- h_high + 1
+h_high_1 <- h_high_1 > 5
+table_h_high_1 <- sum(h_high_1, na.rm = TRUE)
+table_h_high_1
+
+h_high_2 <- h_high + 2
+h_high_2 <- h_high_2 > 5
+table_h_high_2 <- sum(h_high_2, na.rm = TRUE)
+table_h_high_2
+
+h_high_3 <- h_high + 3
+h_high_3 <- h_high_3 > 5
+table_h_high_3 <- sum(h_high_3, na.rm = TRUE)
+table_h_high_3
+
+```
+
